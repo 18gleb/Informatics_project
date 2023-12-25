@@ -26,8 +26,8 @@ class Lesson1(QMainWindow, Ui_MainWindow):
                     self.input_buttons.append(button)
         self.output_buttons.sort(key=lambda x: int(x.objectName().split("_")[-1]))
         self.output_buttons.insert(0, self.pushButton)
-        self.word.setText(self.correct_word.on_rus)   # on_rus
-        self.update_button(len(self.correct_word.on_eng))   # on_eng
+        self.word.setText(self.correct_word.on_rus)  # on_rus
+        self.update_button(len(self.correct_word.on_eng))  # on_eng
 
     def update_button(self, len_word):
         count = 0
@@ -67,16 +67,22 @@ class Lesson1(QMainWindow, Ui_MainWindow):
             else:
                 self.word.setStyleSheet("color: rgb(255, 0, 0);")
                 self.word.setText(f"Неверно.\n Правильный ответ: {self.correct_word.on_eng}")
-            if self.next is None:
+                self.right = False
+            if str(self.next) == "Basic":
                 self.check.setText("Завершить")
             else:
                 self.check.setText("Продолжить")
-        elif self.check.text() == "Продолжить":
+        else:
+            if str(self.next) == "ExamResult":
+                self.next.output_result()
             self.close()
             self.next.show()
-        else:
-            self.close()
 
+
+class Word:
+    def __init__(self, on_rus, on_eng):
+        self.on_rus = on_rus
+        self.on_eng = on_eng
 
 
 sys._excepthook = sys.excepthook
@@ -91,6 +97,6 @@ sys.excepthook = exception_hook
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ex = Lesson1("makaka")
+    ex = Lesson1(Word("линейка", "rulerdasfads"))
     ex.show()
     sys.exit(app.exec())

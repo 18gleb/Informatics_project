@@ -3,11 +3,12 @@ import sys
 from PyQt5.QtWidgets import QMainWindow, QApplication
 
 from CRUD import found_all_words_in_liberty, get_nikname, get_studied_words, get_not_studied_words
-from functions_for_qt import update_my_liberty, create_training
+from functions_for_qt import update_my_liberty, create_training, create_exam
 from qt.basic_window import Ui_MainWindow
 from qt.change import Change
 from qt.deleting_word import DeletingWord
 from qt.dialog_add_word import AddWord
+from qt.exam_result import ExamResult
 
 
 class Basic(QMainWindow, Ui_MainWindow):
@@ -37,14 +38,24 @@ class Basic(QMainWindow, Ui_MainWindow):
         self.update_progress()
 
     def exam_func(self):
-        pass
+        exam = create_exam(self.user_id)
+        for i in range(0, len(exam) - 1):
+            exam[i].next = exam[i + 1]
+        result = ExamResult(self.user_id, exam)
+        result.next = self
+        exam[-1].next = result
+        self.first_exam = exam[0]
+        self.first_exam.show()
+        self.close()
 
     def training_func(self):
         training = create_training(self.user_id)
         for i in range(0, len(training) - 1):
             training[i].next = training[i + 1]
+        training[-1].next = self
         self.first_lesson = training[0]
         self.first_lesson.show()
+        self.close()
 
     def add_word_func(self):
         self.dialog_add.input_word.setText("")
@@ -119,6 +130,9 @@ class Basic(QMainWindow, Ui_MainWindow):
             all = not_studied + studied
             percent = int(studied * 100 / all)
             self.progressBar.setValue(percent)
+
+    def __str__(self):
+        return "Basic"
 
 
 sys._excepthook = sys.excepthook

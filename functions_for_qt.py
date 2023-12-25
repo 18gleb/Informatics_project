@@ -1,8 +1,9 @@
-from random import choice, randint
+from random import choice, randint, shuffle
 
 from CRUD import found_word_on_rus_in_liberty_using_user_id, found_word_on_rus_in_database, add_word_in_liberty_word, \
     found_word_on_eng_in_database, found_word_on_eng_in_liberty_using_user_id, get_nikname, get_phone, get_mail, \
-    get_password, get_words, get_not_studied_words, found_all_words_in_liberty, get_studied_words
+    get_password, get_words, get_not_studied_words, found_all_words_in_liberty, get_studied_words, \
+    get_all_words_from_database
 from exceptions import IncorrectPhoneNumber, IncorrectLenPhoneNumber, IncorrectMail, NumberNotFound, \
     WordAlreadyInLiberty, WordNotInDatabase, WordDoesNotExist, ShortPassword
 from qt.lesson1 import Lesson1
@@ -141,3 +142,19 @@ def create_training(user_id):
             training.append(lesson(correct_word))
     return training
 
+
+def create_exam(user_id):
+    exam = []
+    not_studied_words = get_not_studied_words(user_id)
+    words_for_exam = []
+    while len(not_studied_words) > 0 and len(words_for_exam) < 3:
+        random_words = choice(not_studied_words)
+        not_studied_words.remove(random_words)
+        words_for_exam.append(random_words)
+    words_for_lesson3 = get_all_words_from_database()
+    for i in words_for_exam:
+        exam.append(Lesson1(i))
+        exam.append(Lesson2(i))
+        exam.append(Lesson3(words_for_lesson3, i))
+    shuffle(exam)
+    return exam

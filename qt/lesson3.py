@@ -1,4 +1,3 @@
-import time
 from random import choice
 
 from PyQt5.QtWidgets import QMainWindow, QPushButton
@@ -39,15 +38,17 @@ class Lesson3(QMainWindow, Ui_MainWindow):
             answer = self.sender().text()
             if answer == self.correct_word.on_rus:
                 self.word.setText("Верно")
+                self.right = True
             else:
                 self.word.setText("Неверно")
-            if self.next is None:
+                self.right = False
+            if str(self.next) == "Basic":
                 self.sender().setText("Завершить")
             else:
                 self.sender().setText("Продолжить")
-        elif self.sender().text() == "Продолжить":
+        else:
+            if str(self.next) == "ExamResult":
+                self.next.output_result()
             self.close()
             self.next.show()
-        else:
-            self.close()
 

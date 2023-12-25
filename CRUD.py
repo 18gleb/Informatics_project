@@ -107,6 +107,16 @@ def create_liberty_word(liberty_id, word_id, true_or_false):
     session.close()
 
 
+def update_bool_liberty_word(user_id, word_on_eng):
+    session = session_factory()
+    liberty = session.query(Liberty).where(Liberty.user_id == user_id).first()
+    word = session.query(Word).where(Word.on_eng == word_on_eng).first()
+    liberty_word = session.query(Liberty_word).where(Liberty_word.liberty_id == liberty.id, Liberty_word.word_id == word.id).first()
+    liberty_word.true_or_false = True
+    session.commit()
+    session.close()
+
+
 def get_by_field_liberty_word(liberty_id):
     session = session_factory()
     liberty_word = session.query(Liberty_word).group_by(Liberty_word.liberty_id).all()
@@ -340,5 +350,12 @@ def get_studied_words(user_id):
     if liberty_words:
         for i in liberty_words:
             words.append(session.query(Word).where(Word.id == i.word_id).first())
+    session.close()
+    return words
+
+
+def get_all_words_from_database():
+    session = session_factory()
+    words = session.query(Word).all()
     session.close()
     return words
