@@ -4,7 +4,7 @@ from CRUD import get_words, del_word_in_liberty_word
 from qt.deleting_word_window import Ui_Dialog
 
 
-class DeletingWord(QDialog, Ui_Dialog):   #TODO: Сделать нормальную проверку
+class DeletingWord(QDialog, Ui_Dialog):
     def __init__(self, user_id):
         super().__init__()
         self.setupUi(self)

@@ -22,7 +22,7 @@ class Lesson2(QMainWindow, Ui_MainWindow):
         playsound("word.mp3")
 
     def funck_for_check(self):
-        if self.check.text() == "Проверить":  # TODO: Переделать ввод слов например: В начале в output_word писать "Введите слово на английском" или "Введите слово на русском"
+        if self.check.text() == "Проверить":
             answer = self.output_word.text().lower()
             if self.correct_word.on_eng == answer:
                 self.output_word.setText("Верно")

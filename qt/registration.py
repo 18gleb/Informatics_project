@@ -3,7 +3,7 @@ import sys
 from PyQt5.QtWidgets import QMainWindow, QApplication
 
 from exceptions import AccountNumberExist, AccountMailExist
-from functions_for_qt import check_mail_or_phone
+from functions_for_qt import check_mail_or_phone, check_password, nikname_check
 from qt.basic import Basic
 from qt.reg_window import Ui_MainWindow
 from CRUD import check_nikname, create_User, found_user_using_phone, found_user_using_mail
@@ -23,10 +23,10 @@ class Registration(QMainWindow, Ui_MainWindow):
         mail = check_mail_or_phone(mail_or_phone)
         if not isinstance(mail, tuple):
             self.label_error.setText(mail.error())
-        elif not check_nikname(nikname):
-            self.label_error.setText("Этот никнейм уже занят")
-        elif len(password) < 8:
-            self.label_error.setText("Пароль слишком маленький")
+        elif not isinstance(nikname_check(nikname), str):
+            self.label_error.setText(nikname_check(nikname).error())
+        elif not isinstance(check_password(password), str):   #TODO: Сделай нормальную проверку пароля
+            self.label_error.setText(check_password(password).error())
         else:
             if mail[0] == "phone":
                 if found_user_using_phone(mail[1]) is not None:

@@ -3,9 +3,10 @@ from random import choice, randint, shuffle
 from CRUD import found_word_on_rus_in_liberty_using_user_id, found_word_on_rus_in_database, add_word_in_liberty_word, \
     found_word_on_eng_in_database, found_word_on_eng_in_liberty_using_user_id, get_nikname, get_phone, get_mail, \
     get_password, get_words, get_not_studied_words, found_all_words_in_liberty, get_studied_words, \
-    get_all_words_from_database
+    get_all_words_from_database, check_nikname
 from exceptions import IncorrectPhoneNumber, IncorrectLenPhoneNumber, IncorrectMail, NumberNotFound, \
-    WordAlreadyInLiberty, WordNotInDatabase, WordDoesNotExist, ShortPassword
+    WordAlreadyInLiberty, WordNotInDatabase, WordDoesNotExist, ShortPassword, ForbiddenSymbol, PasswordError, NoNikname, \
+    ShortNikname, NiknameExists
 from qt.lesson1 import Lesson1
 from qt.lesson2 import Lesson2
 from qt.lesson3 import Lesson3
@@ -60,30 +61,22 @@ def check_word_in_liberty(word: str, user_id: int):
     if len(word) == count_rus:
         if found_word_on_rus_in_database(word):
             if found_word_on_rus_in_liberty_using_user_id(user_id, word):
-                print("daddda")
                 add_word_in_liberty_word(user_id, word)
-                print("Слово успешно добавлено")
                 return "Ок"
             else:
-                print("Это слово уже есть в вашей библиотеке")
                 return WordAlreadyInLiberty()
         else:
-            print("К сожалению этого слова нет в нашей базе, но мы обязательно его добавим")
             return WordNotInDatabase()
     elif len(word) == count_eng:
         if found_word_on_eng_in_database(word):
             if found_word_on_eng_in_liberty_using_user_id(user_id, word):
                 add_word_in_liberty_word(user_id, word)
-                print("Слово успешно добавлено")
                 return "Ок"
             else:
-                print("Это слово уже есть в вашей библиотеке")
                 return WordAlreadyInLiberty()
         else:
-            print("К сожалению этого слова нет в нашей базе, но мы обязательно его добавим")
             return WordNotInDatabase()
     else:
-        print("Такое слово не существует")
         return WordDoesNotExist()
 
 
@@ -105,10 +98,30 @@ def update_my_liberty(user_id: int, page):
 
 
 def check_password(password: str):
-    if len(password) < 8:
-        return ShortPassword()
+    digits = '1234567890'
+    upper_letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    lower_letters = 'abcdefghijklmnopqrstuvwxyz'
+    symbols = '!@#$%^&*()-_+'
+    acceptable = digits + upper_letters + lower_letters + symbols
+
+    passwd = set(password)
+    if any(char not in acceptable for char in passwd):
+        return ForbiddenSymbol()
     else:
-        return "Ок"
+        recommendations = []
+        if len(password) < 12:
+            return ShortPassword(12 - len(password))
+        for what, message in ((digits, 'цифру'),
+                              (symbols, 'спецсимвол'),
+                              (upper_letters, 'заглавную букву'),
+                              (lower_letters, 'строчную букву')):
+            if all(char not in what for char in passwd):
+                return PasswordError(message)
+
+        if recommendations:
+            return "Слабый пароль. Рекомендации:", ", ".join(recommendations)
+        else:
+            return 'Сильный пароль.'
 
 
 def create_training(user_id):
@@ -158,3 +171,14 @@ def create_exam(user_id):
         exam.append(Lesson3(words_for_lesson3, i))
     shuffle(exam)
     return exam
+
+
+def nikname_check(nikname: str):
+    if len(nikname) == 0:
+        return NoNikname()
+    elif len(nikname) < 4:
+        return ShortNikname()
+    elif not check_nikname(nikname):
+        return NiknameExists()
+    return "Ок"
+

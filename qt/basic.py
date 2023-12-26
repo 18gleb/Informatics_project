@@ -123,12 +123,16 @@ class Basic(QMainWindow, Ui_MainWindow):
 
     def update_progress(self):
         if found_all_words_in_liberty(self.user_id) == 0:
+            self.progressBar.hide()
+            self.output_progress.show()
             self.output_progress.setText("В вашей библиотеке нет слов")
         else:
             not_studied = len(get_not_studied_words(self.user_id))
             studied = len(get_studied_words(self.user_id))
             all = not_studied + studied
             percent = int(studied * 100 / all)
+            self.progressBar.show()
+            self.output_progress.hide()
             self.progressBar.setValue(percent)
 
     def __str__(self):
