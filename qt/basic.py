@@ -40,9 +40,11 @@ class Basic(QMainWindow, Ui_MainWindow):
     def exam_func(self):
         exam = create_exam(self.user_id)
         for i in range(0, len(exam) - 1):
+            exam[i].setWindowTitle("Экзамен")
             exam[i].next = exam[i + 1]
         result = ExamResult(self.user_id, exam)
         result.next = self
+        exam[-1].setWindowTitle("Экзамен")
         exam[-1].next = result
         self.first_exam = exam[0]
         self.first_exam.show()
@@ -51,7 +53,9 @@ class Basic(QMainWindow, Ui_MainWindow):
     def training_func(self):
         training = create_training(self.user_id)
         for i in range(0, len(training) - 1):
+            training[i].setWindowTitle("Тренировка")
             training[i].next = training[i + 1]
+        training[-1].setWindowTitle("Тренировка")
         training[-1].next = self
         self.first_lesson = training[0]
         self.first_lesson.show()
@@ -103,7 +107,7 @@ class Basic(QMainWindow, Ui_MainWindow):
                 self.change_win.show()
             else:
                 self.change_win.setWindowTitle("Изменение адреса электронной почты")
-                self.change_win.input.setText(self.output_phone.text())
+                self.change_win.input.setText(self.output_mail.text())
                 self.change_win.pushButton.setText("Изменить")
                 self.change_win.show()
 
